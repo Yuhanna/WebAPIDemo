@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebAPIDemo.Filters;
 using WebAPIDemo.Models;
+using WebAPIDemo.Models.Repositories;
 
 namespace WebAPIDemo.Controllers
 {
@@ -8,29 +10,57 @@ namespace WebAPIDemo.Controllers
     public class ShirtsController : ControllerBase
     {
         [HttpGet]
-        public string GetShirts()
+        public IActionResult GetShirts()
         {
-            return "Reading all the shirts";
+            return Ok(ShirtRepository.GetShirts());
         }
         [HttpGet("{id}")]
-        public string GetShirtById(int id)//[FromQuery] => ?color=red //[FromHeader(Name ="Color")] =>header(Postman In) da Color eklenecek
-        {
-            return $"Reading shirts with ID= {id}";
+        [Shirt_ValidateShirtIdFilter]
+        public IActionResult GetShirtById(int id)//[FromRoute] => /id/colorName , [FromQuery] => ?color=red //[FromHeader(Name ="Color")] =>header(Postman In) da Color eklenecek
+        {//IActionResult farklı şeyleri döndürebilmeyi(return) yarıyor
+            //var shirt = shirts.FirstOrDefault(x => x.ShirtId == id);
+            return Ok(ShirtRepository.GetShirtById(id));
         }
         [HttpPost]
-        public string CreateShirt([FromBody]Shirt shirt)
+        [Shirt_ValidateCreateShirtFilter]
+        public IActionResult CreateShirt([FromBody]Shirt shirt)//[FromBody] => Body>raw(postman), [FromForm] => Body>form-data(postman)
         {
-            return $"Creating a shirts";
+            //-----Tek Başına Class Yapmadan Önce---------- Shirt_ValidateCreateShirtFilterAttribute
+            //if (shirt == null) { return BadRequest(); }
+            //var existingShirt = ShirtRepository.GetShirtsByProperties(shirt.Brand, shirt.Gender, shirt.Color, shirt.Size);
+            //if (existingShirt != null) return BadRequest();
+            //-----Tek Başına Class Yapmadan Önce---------- Shirt_ValidateCreateShirtFilterAttribute
+
+            ShirtRepository.AddShirt(shirt);
+
+            return CreatedAtAction(nameof(GetShirtById),
+                new { id = shirt.ShirtId },
+                shirt);
         }
         [HttpPut("{id}")]
-        public string UpdateShirt(int id)
+        [Shirt_ValidateShirtIdFilter]
+        [Shirt_ValidateUpdateShirtFilterAttriibute]
+        public IActionResult UpdateShirt(int id, Shirt shirt)
         {
-            return $"Updating shirts which ID= {id}";
+            try
+            {
+                ShirtRepository.UpdateShirt(shirt);
+            }
+            catch (Exception ex)
+            {
+                if (!ShirtRepository.ShirtExists(id))
+                    return NotFound();
+
+                throw;
+            }
+
+
+            return NoContent();
         }
         [HttpDelete("{id}")]
-        public string DeleteShirt(int id)
+        public IActionResult DeleteShirt(int id)
         {
-            return $"Delete shirts which ID= {id}";
+            return Ok("Delete shirts which ID= {id}");
         }
     }
 }
