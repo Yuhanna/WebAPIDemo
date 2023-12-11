@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebAPIDemo.Filters;
+using WebAPIDemo.Filters.ActionFilters;
+using WebAPIDemo.Filters.ExceptionFilters;
 using WebAPIDemo.Models;
 using WebAPIDemo.Models.Repositories;
 
@@ -40,27 +41,20 @@ namespace WebAPIDemo.Controllers
         [HttpPut("{id}")]
         [Shirt_ValidateShirtIdFilter]
         [Shirt_ValidateUpdateShirtFilterAttriibute]
+        [Shirt_HandleUpdateExceptionsFilter] // After Action executed and then deleted ID, this exceptipn will work
         public IActionResult UpdateShirt(int id, Shirt shirt)
         {
-            try
-            {
-                ShirtRepository.UpdateShirt(shirt);
-            }
-            catch (Exception ex)
-            {
-                if (!ShirtRepository.ShirtExists(id))
-                    return NotFound();
-
-                throw;
-            }
-
+            ShirtRepository.UpdateShirt(shirt);
 
             return NoContent();
         }
         [HttpDelete("{id}")]
+        [Shirt_ValidateShirtIdFilter]
         public IActionResult DeleteShirt(int id)
         {
-            return Ok("Delete shirts which ID= {id}");
+            var shirt  = ShirtRepository.GetShirtById(id);
+            ShirtRepository.DeleteShirt(id);
+            return Ok(shirt);
         }
     }
 }

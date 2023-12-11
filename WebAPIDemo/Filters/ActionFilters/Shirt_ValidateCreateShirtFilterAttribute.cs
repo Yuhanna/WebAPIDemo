@@ -3,7 +3,7 @@ using WebAPIDemo.Models.Repositories;
 using WebAPIDemo.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPIDemo.Filters
+namespace WebAPIDemo.Filters.ActionFilters
 {
     public class Shirt_ValidateCreateShirtFilterAttribute : ActionFilterAttribute
     {
@@ -13,9 +13,9 @@ namespace WebAPIDemo.Filters
 
             var shirt = context.ActionArguments["shirt"] as Shirt;
 
-            if (shirt == null) 
+            if (shirt == null)
             {
-                context.ModelState.AddModelError("shirt","Shirt object is null.");
+                context.ModelState.AddModelError("shirt", "Shirt object is null.");
                 var problemDetails = new ValidationProblemDetails(context.ModelState)
                 {
                     Status = StatusCodes.Status400BadRequest
@@ -35,7 +35,7 @@ namespace WebAPIDemo.Filters
                     context.Result = new BadRequestObjectResult(problemDetails);
                 }
             }
-            
+
         }
     }
 }

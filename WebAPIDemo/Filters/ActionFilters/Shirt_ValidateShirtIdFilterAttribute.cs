@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebAPIDemo.Models.Repositories;
 
-namespace WebAPIDemo.Filters
+namespace WebAPIDemo.Filters.ActionFilters
 {
     public class Shirt_ValidateShirtIdFilterAttribute : ActionFilterAttribute
     {
@@ -24,7 +24,7 @@ namespace WebAPIDemo.Filters
                 }
                 else if (!ShirtRepository.ShirtExists(shirtId.Value))
                 {
-                    context.ModelState.AddModelError("ShirtId", "ShirtId doesn't exist");
+                    context.ModelState.AddModelError("ShirtId", "ShirtId doesn't exist | Shirt_ValidateShirtIdFilterAttribute");
                     var problemDetails = new ValidationProblemDetails(context.ModelState)
                     {
                         Status = StatusCodes.Status400BadRequest

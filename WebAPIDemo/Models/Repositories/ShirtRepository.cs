@@ -56,5 +56,13 @@
             shirtToUpdate.Gender = shirt.Gender;
         }
 
+        public static void DeleteShirt(int shirtId)
+        {
+            var shirt = GetShirtById(shirtId);
+            if (shirt != null)
+            {
+                shirts.Remove(shirt);
+            }
+        }
     }
 }
