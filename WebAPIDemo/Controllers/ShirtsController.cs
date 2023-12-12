@@ -55,10 +55,17 @@ namespace WebAPIDemo.Controllers
         [HttpPut("{id}")]
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
         [Shirt_ValidateUpdateShirtFilterAttriibute]
-        [Shirt_HandleUpdateExceptionsFilter] // After Action executed and then deleted ID, this exceptipn will work
+        [TypeFilter(typeof(Shirt_HandleUpdateExceptionsFilterAttribute))] // After Action executed and then deleted ID, this exceptipn will work
         public IActionResult UpdateShirt(int id, Shirt shirt)
         {
-            ShirtRepository.UpdateShirt(shirt);
+            var shirtToUpdate = HttpContext.Items["shirt"] as Shirt;
+            shirtToUpdate.Brand = shirt.Brand;
+            shirtToUpdate.Price = shirt.Price;
+            shirtToUpdate.Size = shirt.Size;
+            shirtToUpdate.Color = shirt.Color;
+            shirtToUpdate.Gender = shirt.Gender;
+
+            db.SaveChanges();
 
             return NoContent();
         }
@@ -66,9 +73,12 @@ namespace WebAPIDemo.Controllers
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
         public IActionResult DeleteShirt(int id)
         {
-            var shirt  = ShirtRepository.GetShirtById(id);
-            ShirtRepository.DeleteShirt(id);
-            return Ok(shirt);
+            //var shirt  = ShirtRepository.GetShirtById(id);
+            //ShirtRepository.DeleteShirt(id);
+            var shirtToDeletre = HttpContext.Items["shirt"] as Shirt;
+            db.Shirts.Remove(shirtToDeletre);
+            db.SaveChanges();
+            return Ok(shirtToDeletre);
         }
     }
 }
