@@ -10,17 +10,21 @@
             <td>Color</td>
             <td>Size</td>
             <td>Price</td>
+            <td></td>
         </tr>
     </thead>
-    <tbody
+    <tbody>
            @foreach(var shirt in Model)
            { 
         <tr>
             <td>@shirt.Brand</td>
             <td>@shirt.Gender</td>
             <td>@shirt.Color</td>
-             <td>@shirt.Size</td>
-             <td>@(shirt.Price.HasValue?shirt.Price.Value.ToString("c",System.Globalization.CultureInfo.CreateSpecificCulture("tr-TR")):"")</td>
+            <td>@shirt.Size</td>
+            <td>@(shirt.Price.HasValue?shirt.Price.Value.ToString("c",System.Globalization.CultureInfo.CreateSpecificCulture("tr-TR")):"")</td>
+            <td><a class="btn btn-link" asp-controller="shirts" asp-action="updateshirt" asp-route-shirtId="@shirt.ShirtId">Edit</a></td>
+            <td><a class="btn btn-link" asp-controller="shirts" asp-action="deleteshirt" asp-route-shirtId="@shirt.ShirtId">Delete</a></td>
+
         </tr>
         }
     </tbody>
