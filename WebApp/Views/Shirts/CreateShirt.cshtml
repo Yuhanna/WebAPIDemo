@@ -2,7 +2,8 @@
 <h3>Shirt</h3>
 <br />
 <form method="post" asp-action="CreateShirt">
-    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <!-- <div class="text-danger" asp-validation-summary="ModelOnly"></div>-->
+    <div class="text-danger" asp-validation-summary="All"></div>
     <div class="mb-4 row">
         <div class="col-3">
             <label asp-for="Brand" class="col-form-label"></label>
@@ -11,7 +12,7 @@
             <input type="text" asp-for="Brand" class="form-control" />
         </div>
         <div class="col">
-             <span class="alert-danger" asp-validation-for="Brand"></span>
+            <span class="alert-danger" asp-validation-for="Brand"></span>
         </div>
     </div>
     <div class="mb-4 row">
@@ -63,7 +64,7 @@
             <input type="submit" class="btn btn-primary" value="Submit" />
         </div>
         <div class="col-6">
-    
+
         </div>
     </div>
 </form>
