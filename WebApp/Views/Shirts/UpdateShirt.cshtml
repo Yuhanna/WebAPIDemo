@@ -3,7 +3,8 @@
 <br />
 <form method="post" asp-action="UpdateShirt">
     <input type="hidden" asp-for="ShirtId" />
-    <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+    <!--<div class="text-danger" asp-validation-summary="ModelOnly"></div>-->
+    <div class="text-danger" asp-validation-summary="All"></div>
     <div class="mb-4 row">
         <div class="col-3">
             <label asp-for="Brand" class="col-form-label"></label>

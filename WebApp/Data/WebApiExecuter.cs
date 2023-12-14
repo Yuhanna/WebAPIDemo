@@ -58,7 +58,7 @@ namespace WebApp.Data
             if(!httpReponse.IsSuccessStatusCode)
             {
                 var errorJson = await httpReponse.Content.ReadAsStringAsync();
-                throw new Exception(errorJson);
+                throw new WebApiException(errorJson);
             }
         }
     }
