@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using WebAPIDemo.Authority;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
 
 namespace WebAPIDemo.Controllers
 {//This is for AUTHORİTY. Other Part(App(or USer) and Resource(WebApi))
@@ -8,16 +12,23 @@ namespace WebAPIDemo.Controllers
     [ApiController]
     public class AuthorityController : ControllerBase
     {
+        private readonly IConfiguration configuration;
+
+        public AuthorityController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
         //public IActionResult Authenticate(string username, string password) //We do not want to go credentials through URL. So like below
         [HttpPost("auth")]
         public IActionResult Authenticate([FromBody]AppCredential credential)//So should be posted encrypted inside Https [frombody]
         {
-            if(AppRepository.Authenticate(credential.ClientId, credential.Secret))
+            if(Authenticator.Authenticate(credential.ClientId, credential.Secret))
             {
+                var expiresAt = DateTime.UtcNow.AddMinutes(10);
                 return Ok(new
                 {
-                    access_token = CreateToken(credential.ClientId),
-                    expires_at = DateTime.UtcNow.AddMinutes(10)
+                    access_token = Authenticator.CreateToken(credential.ClientId, expiresAt, configuration.GetValue<string>("SecretKey")),
+                    expires_at = expiresAt
 
                 });
             }
@@ -31,9 +42,6 @@ namespace WebAPIDemo.Controllers
                 return new UnauthorizedObjectResult(problemDetails);
             }
         }
-        private string CreateToken(string clientId)
-        {
-            return string.Empty;
-        }
+
     }
 }
