@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebAPIDemo.Attributes;
 using WebAPIDemo.Data;
 using WebAPIDemo.Filters.ActionFilters;
 using WebAPIDemo.Filters.AuthFilters;
@@ -21,6 +22,7 @@ namespace WebAPIDemo.Controllers
         }
 
         [HttpGet]
+        [RequiredClaim("read","true")]
         public IActionResult GetShirts()
         {
             // return Ok(ShirtRepository.GetShirts());
@@ -28,6 +30,7 @@ namespace WebAPIDemo.Controllers
         } 
         [HttpGet("{id}")]
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
+        [RequiredClaim("read", "true")]
         public IActionResult GetShirtById(int id)//[FromRoute] => /id/colorName , [FromQuery] => ?color=red //[FromHeader(Name ="Color")] =>header(Postman In) da Color eklenecek
         {//IActionResult farklı şeyleri döndürebilmeyi(return) yarıyor
             //var shirt = shirts.FirstOrDefault(x => x.ShirtId == id);
@@ -37,6 +40,7 @@ namespace WebAPIDemo.Controllers
         }
         [HttpPost]
         [TypeFilter(typeof(Shirt_ValidateCreateShirtFilterAttribute))]
+        [RequiredClaim("write", "true")]
         public IActionResult CreateShirt([FromBody]Shirt shirt)//[FromBody] => Body>raw(postman), [FromForm] => Body>form-data(postman)
         {
             //-----Tek Başına Class Yapmadan Önce---------- Shirt_ValidateCreateShirtFilterAttribute
@@ -58,6 +62,7 @@ namespace WebAPIDemo.Controllers
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
         [Shirt_ValidateUpdateShirtFilterAttriibute]
         [TypeFilter(typeof(Shirt_HandleUpdateExceptionsFilterAttribute))] // After Action executed and then deleted ID, this exceptipn will work
+        [RequiredClaim("write", "true")]
         public IActionResult UpdateShirt(int id, Shirt shirt)
         {
             var shirtToUpdate = HttpContext.Items["shirt"] as Shirt;
@@ -73,6 +78,7 @@ namespace WebAPIDemo.Controllers
         }
         [HttpDelete("{id}")]
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
+        [RequiredClaim("delete", "true")]
         public IActionResult DeleteShirt(int id)
         {
             //var shirt  = ShirtRepository.GetShirtById(id);

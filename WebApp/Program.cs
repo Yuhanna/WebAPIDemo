@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using WebApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +9,22 @@ builder.Services.AddHttpClient("ShirtsApi", client =>
     client.BaseAddress = new Uri("https://localhost:7157/api/");//[Route("api/[controller]")]
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
-    
+
+builder.Services.AddHttpClient("AuthorityApi", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7157/");//[Route("[controller]")]
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;//because we do not want user to use script to modify the SESSION cookie
+    options.IdleTimeout=TimeSpan.FromHours(5);
+    options.Cookie.IsEssential = true; 
+});
+
+builder.Services.AddHttpContextAccessor();//To acces to here(session) from Custom Class directly
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddTransient<IWebApiExecuter, WebApiExecuter>(); 
@@ -29,6 +45,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSession();//Session kullanmak için ilk burada tanýmlanýr
 
 app.MapControllerRoute(
     name: "default",
