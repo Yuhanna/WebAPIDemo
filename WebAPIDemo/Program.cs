@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -12,8 +13,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(Options =>
 }
 );
 
-// Add services to the container.
+// Add services to the container. 
 builder.Services.AddControllers();
+
+builder.Services.AddApiVersioning(options => //For versioning and setting default version
+{
+    options.ReportApiVersions = true;//in header it show which endpoint support which version
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1,0);
+    options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
+});
 
 builder.Services.AddEndpointsApiExplorer();//For Swagger Document
 builder.Services.AddSwaggerGen(c =>

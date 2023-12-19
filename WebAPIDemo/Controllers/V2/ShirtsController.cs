@@ -2,14 +2,15 @@
 using WebAPIDemo.Attributes;
 using WebAPIDemo.Data;
 using WebAPIDemo.Filters.ActionFilters;
+using WebAPIDemo.Filters.ActionFilters.V2;
 using WebAPIDemo.Filters.AuthFilters;
 using WebAPIDemo.Filters.ExceptionFilters;
 using WebAPIDemo.Models;
 using WebAPIDemo.Models.Repositories;
 
-namespace WebAPIDemo.Controllers
+namespace WebAPIDemo.Controllers.V2
 {
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
     [Route("api/[controller]")]
     [JwtTokenAuthFilter]
@@ -41,6 +42,7 @@ namespace WebAPIDemo.Controllers
         }
         [HttpPost]
         [TypeFilter(typeof(Shirt_ValidateCreateShirtFilterAttribute))]
+        [Shirt_EnsureDescriptionIsPresentFilter]
         [RequiredClaim("write", "true")]
         public IActionResult CreateShirt([FromBody]Shirt shirt)//[FromBody] => Body>raw(postman), [FromForm] => Body>form-data(postman)
         {
@@ -63,6 +65,7 @@ namespace WebAPIDemo.Controllers
         [TypeFilter(typeof(Shirt_ValidateShirtIdFilterAttribute))]
         [Shirt_ValidateUpdateShirtFilterAttriibute]
         [TypeFilter(typeof(Shirt_HandleUpdateExceptionsFilterAttribute))] // After Action executed and then deleted ID, this exceptipn will work
+        [Shirt_EnsureDescriptionIsPresentFilter]
         [RequiredClaim("write", "true")]
         public IActionResult UpdateShirt(int id, Shirt shirt)
         {

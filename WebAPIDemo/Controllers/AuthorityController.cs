@@ -9,6 +9,7 @@ namespace WebAPIDemo.Controllers
 {//This is for AUTHORİTY. Other Part(App(or USer) and Resource(WebApi))
     //Players: Application + AUTHORİTY(this) + Resource
     //Processes: Register>Authenticate>Create Token>Verify Token>Authorization
+    [ApiVersion("1.0")]
     [ApiController]
     public class AuthorityController : ControllerBase
     {
