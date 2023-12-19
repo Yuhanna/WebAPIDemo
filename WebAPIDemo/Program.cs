@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using WebAPIDemo.Data;
+using WebAPIDemo.Filters.OperationFilter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,16 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();//For Swagger Document
 builder.Services.AddSwaggerGen(c =>
-    {
-      //  c.OperationFilter<AuthorizationHeaderOperationFilter>
+ {//To add authorization Header to swagger
+        c.OperationFilter<AuthorizationHeaderOperationFilter>();
+     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme        //AuthorizationHeaderOperationFilter linked to this class
+         {
+        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+ }); 
+
 });////For Swagger Document
 
 var app = builder.Build();
