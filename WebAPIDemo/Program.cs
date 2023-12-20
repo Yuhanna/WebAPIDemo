@@ -24,10 +24,14 @@ builder.Services.AddApiVersioning(options => //For versioning and setting defaul
     //options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
 });
 
-builder.Services.AddEndpointsApiExplorer();//For Swagger Document
+//builder.Services.AddEndpointsApiExplorer();//For Swagger Document
+builder.Services.AddVersionedApiExplorer(Options => Options.GroupNameFormat = "'v'VVV");//Sopport versionnig in Swagger documentation
 builder.Services.AddSwaggerGen(c =>
- {//To add authorization Header to swagger
-        c.OperationFilter<AuthorizationHeaderOperationFilter>();
+ {
+     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My Web API v1", Version = "version 1"});
+     c.SwaggerDoc("v2", new OpenApiInfo { Title = "My Web API v2", Version = "version 2" });
+     //To add authorization Header to swagger
+     c.OperationFilter<AuthorizationHeaderOperationFilter>();
      c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme        //AuthorizationHeaderOperationFilter linked to this class
          {
         Scheme = "Bearer",
@@ -41,12 +45,16 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-
 if(app.Environment.IsDevelopment())//For Swagger Document
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(
+        options => //START For solving versioning of Swagger Documen's problem
+        {
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1");
+            options.SwaggerEndpoint("/swagger/v2/swagger.json", "WebAPI v2");
+        }//END For solving versioning of Swagger Documen's problem
+        );
 }
 
 
